@@ -20,4 +20,5 @@ file_permissions=(
   ["/usr/local/bin/pallas-live-setup"]="0:0:755"
   ["/usr/local/bin/launch-calamares"]="0:0:755"
   ["/etc/skel/Desktop/Install PallasOS.desktop"]="0:0:755"
+  ["/root/Desktop/Install PallasOS.desktop"]="0:0:755"
 )
