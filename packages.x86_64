@@ -83,7 +83,8 @@ arch-install-scripts
 # Desktop Environment (KDE Plasma)
 xorg-server
 xorg-xinit
-plasma-workspace-x11
+kwin-x11
+plasma-x11-session
 plasma-desktop
 sddm
 konsole
