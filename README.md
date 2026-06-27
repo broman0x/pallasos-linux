@@ -1,5 +1,9 @@
 <div align="center">
-  <img src="logo.png" alt="PallasOS Logo" width="400"/>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo.png">
+    <source media="(prefers-color-scheme: light)" srcset="logo.png">
+    <img alt="PallasOS Logo" src="logo.png" width="400">
+  </picture>
   <h1>PallasOS</h1>
   <p><strong>Distribusi Linux Berbasis Arch Linux</strong></p>
 </div>
