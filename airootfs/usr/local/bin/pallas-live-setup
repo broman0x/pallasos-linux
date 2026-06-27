@@ -5,8 +5,7 @@ if ! id -u pallas >/dev/null 2>&1; then
     # Create autologin group if it doesn't exist (LightDM requirement)
     groupadd -r autologin 2>/dev/null || true
     
-    # Create the user
-    useradd -m -g users -G wheel,video,audio,storage,optical,network,autologin -s /bin/bash pallas
+    useradd -m -g users -G wheel,video,audio,storage,optical -s /bin/bash pallas
     
     # Set empty password
     passwd -d pallas

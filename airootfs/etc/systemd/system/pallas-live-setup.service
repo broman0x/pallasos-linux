@@ -1,7 +1,6 @@
 [Unit]
 Description=PallasOS Live Environment Setup
-Before=lightdm.service
-ConditionPathExists=/run/archiso/bootmnt
+Before=sddm.service
 
 [Service]
 Type=oneshot
