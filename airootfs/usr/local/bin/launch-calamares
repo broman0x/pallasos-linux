@@ -1,0 +1,5 @@
+#!/bin/bash
+# Wrapper to launch Calamares as root in the live environment
+# Allow root to access the X11 display
+xhost +si:localuser:root 2>/dev/null || true
+exec sudo -E /usr/bin/calamares "$@"

@@ -2,42 +2,39 @@
 
 title-text: ""
 desktop-image: "background.png"
-desktop-color: "#000000"
-terminal-font: "Terminus Regular 16"
-title-font: "Terminus Regular 16"
-message-font: "Terminus Regular 16"
-message-color: "#7f8c8d"
-message-bg-color: "#4d4d4d"
+desktop-color: "#1e1e2e"
+message-color: "#cdd6f4"
+message-bg-color: "#313244"
 
 + image {
-    left = 43%
-    top = 15%
+    left = 50%-128
+    top = 10%
     width = 256
-    height = 256
+    height = 164
     file = "logo.png"
 }
 
 + boot_menu {
-    left = 35%
-    top = 40%
-    width = 30%
+    left = 25%
+    top = 35%
+    width = 50%
     height = 50%
-    item_color = "#cccccc"
-    selected_item_color = "#ffffff"
-    item_height = 30
-    item_spacing = 10
-    icon_width = 32
-    icon_height = 32
+    item_color = "#bac2de"
+    selected_item_color = "#89b4fa"
+    item_height = 36
+    item_spacing = 8
+    icon_width = 0
+    icon_height = 0
 }
 
 + progress_bar {
     id = "__timeout__"
-    left = 35%
+    left = 30%
     top = 90%
-    width = 30%
-    height = 20
-    text_color = "#ffffff"
-    border_color = "#000000"
-    bg_color = "#1a1a1a"
-    fg_color = "#3498db"
+    width = 40%
+    height = 16
+    text_color = "#cdd6f4"
+    border_color = "#45475a"
+    bg_color = "#313244"
+    fg_color = "#89b4fa"
 }
