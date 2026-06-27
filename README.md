@@ -56,6 +56,14 @@ sudo mkarchiso -v -w work/ -o out/ .
 ```
 File ISO akan secara otomatis dihasilkan di dalam folder `out/`.
 
+## Kontribusi
+
+PallasOS adalah proyek komunitas yang dikembangkan secara terbuka. Kami sangat menyambut kontribusi dari siapa saja. Jika Anda menemukan *bug*, memiliki ide fitur baru, atau ingin memperbaiki dokumentasi:
+
+1. Buka halaman **Issues** untuk mendiskusikan perubahan atau melaporkan masalah.
+2. Lakukan *fork* pada repositori ini.
+3. Ajukan **Pull Request (PR)** dengan deskripsi perubahan yang jelas.
+
 ## Lisensi
 
 PallasOS dilisensikan di bawah lisensi *open-source*. Anda diundang untuk berkontribusi, memodifikasi, maupun mendistribusikan ulang proyek ini.
