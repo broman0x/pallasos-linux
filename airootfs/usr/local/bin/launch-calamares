@@ -1,6 +1,9 @@
 #!/bin/bash
 # Launch Calamares and capture errors
 LOG="/tmp/calamares-error.log"
+export QT_QPA_PLATFORMTHEME=kde
+export QT_STYLE_OVERRIDE=Breeze-Dark
+export QT_QUICK_CONTROLS_STYLE=org.kde.desktop
 calamares 2>&1 | tee "$LOG"
 EXIT_CODE=${PIPESTATUS[0]}
 
