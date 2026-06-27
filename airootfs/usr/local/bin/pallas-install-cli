@@ -404,6 +404,10 @@ mount_partitions() {
 install_base() {
     msg "Menginstall base system (ini bisa memakan waktu)..."
 
+    # Update keyring first to prevent PGP signature errors during pacstrap
+    msg "Updating archlinux-keyring..."
+    pacman -Sy --noconfirm archlinux-keyring || true
+
     pacstrap -K /mnt \
         base linux linux-headers linux-firmware \
         amd-ucode intel-ucode \
@@ -417,7 +421,8 @@ install_base() {
         sudo nano vim htop wget curl git \
         bash-completion man-db man-pages \
         wpa_supplicant wireless_tools iwd dhcpcd \
-        reflector
+        reflector \
+        plasma-desktop plasma-nm plasma-pa sddm konsole dolphin
 
     echo ""
 
