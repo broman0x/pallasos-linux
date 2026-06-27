@@ -3,9 +3,8 @@ Operation = Install
 Operation = Upgrade
 Type = Package
 Target = plymouth
-Target = cachyos-calamares
 
 [Action]
-Description = Applying PallasOS Plymouth Watermark...
+Description = Applying PallasOS Plymouth branding...
 When = PostTransaction
-Exec = /usr/bin/cp -f /etc/plymouth/pallas-logo.png /usr/share/plymouth/themes/spinner/watermark.png
+Exec = /bin/sh -c 'cp -f /etc/plymouth/pallas-logo.png /usr/share/plymouth/themes/spinner/watermark.png && cp -f /etc/plymouth/pallas-spinner.plymouth /usr/share/plymouth/themes/spinner/spinner.plymouth'

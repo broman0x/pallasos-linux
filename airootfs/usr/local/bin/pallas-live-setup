@@ -27,3 +27,11 @@ for custom_mod in /etc/calamares/modules/*.conf.custom; do
         mv "$custom_mod" "${custom_mod%.custom}"
     fi
 done
+
+# Apply PallasOS logo as Plymouth boot animation watermark
+if [ -f /etc/plymouth/pallas-logo.png ] && [ -d /usr/share/plymouth/themes/spinner ]; then
+    cp -f /etc/plymouth/pallas-logo.png /usr/share/plymouth/themes/spinner/watermark.png
+    cp -f /etc/plymouth/pallas-spinner.plymouth /usr/share/plymouth/themes/spinner/spinner.plymouth
+    plymouth-set-default-theme -R spinner 2>/dev/null || true
+fi
+

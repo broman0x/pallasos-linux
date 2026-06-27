@@ -1,0 +1,7 @@
+// Allow wheel group members to run Calamares without password authentication
+// This is intended for the PallasOS Live environment
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
