@@ -1,0 +1,35 @@
+# PallasOS GRUB Theme
+
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#000000"
+terminal-font: "Terminus Regular 16"
+title-font: "Terminus Regular 16"
+message-font: "Terminus Regular 16"
+message-color: "#7f8c8d"
+message-bg-color: "#4d4d4d"
+
++ boot_menu {
+    left = 35%
+    top = 40%
+    width = 30%
+    height = 50%
+    item_color = "#cccccc"
+    selected_item_color = "#ffffff"
+    item_height = 30
+    item_spacing = 10
+    icon_width = 32
+    icon_height = 32
+}
+
++ progress_bar {
+    id = "__timeout__"
+    left = 35%
+    top = 90%
+    width = 30%
+    height = 20
+    text_color = "#ffffff"
+    border_color = "#000000"
+    bg_color = "#1a1a1a"
+    fg_color = "#3498db"
+}

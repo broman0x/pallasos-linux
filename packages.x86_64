@@ -92,3 +92,13 @@ dolphin
 plasma-nm
 plasma-pa
 yad
+# Mega Update Packages
+calamares
+kpmcore
+ckbcomp
+hwinfo
+yaml-cpp
+squashfs-tools
+kinfocenter
+plymouth
+plymouth-kcm

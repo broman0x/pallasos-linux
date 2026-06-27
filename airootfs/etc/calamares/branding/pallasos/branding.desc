@@ -1,0 +1,25 @@
+---
+componentName:   pallasos
+windowExpanding: normal
+windowSize:      800px,520px
+windowPlacement: center
+
+strings:
+    productName:         PallasOS
+    shortProductName:    Pallas
+    version:             Alpha
+    shortVersion:        alpha
+    versionedName:       PallasOS Alpha
+    shortVersionedName:  Pallas alpha
+    bootloaderEntryName: PallasOS
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "logo.png"
+    productWelcome:      "logo.png"
+
+style:
+   sidebarBackground:    "#1e1e2e"
+   sidebarText:          "#cdd6f4"
+   sidebarTextSelect:    "#89b4fa"
+   sidebarTextHighlight: "#89b4fa"

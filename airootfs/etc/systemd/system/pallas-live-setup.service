@@ -1,6 +1,6 @@
 [Unit]
 Description=PallasOS Live Environment Setup
-Before=sddm.service
+Before=display-manager.service sddm.service
 
 [Service]
 Type=oneshot
