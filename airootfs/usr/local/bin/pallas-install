@@ -1,0 +1,639 @@
+#!/bin/bash
+# ============================================================
+#  PallasOS Installer
+#  Arch Linux-based distribution installer
+# ============================================================
+
+set -e
+
+# Colors (Modern/Elegant)
+DIM='\033[2m'
+BOLD='\033[1m'
+NC='\033[0m'
+WHITE='\033[1;37m'
+MAGENTA='\033[1;35m'
+CYAN='\033[1;36m'
+RED='\033[1;31m'
+YELLOW='\033[1;33m'
+
+# Globals
+TARGET_DISK=""
+BOOT_MODE=""
+HOSTNAME_VAL="pallas"
+USERNAME=""
+USER_PASS=""
+ROOT_PASS=""
+TIMEZONE=""
+LOCALE="en_US.UTF-8"
+KEYMAP="us"
+SWAP_SIZE=""
+
+# ============================================================
+#  Helper functions
+# ============================================================
+
+print_banner() {
+    clear
+    echo -e "${WHITE}"
+    echo '                                         .-+############+-.                                         '
+    echo '                                     .########################.                                     '
+    echo '                                  -#####+-.              .-+#####-                                  '
+    echo '                      +########-#####-                        .#####-########+                      '
+    echo '                    .###-..-+#####+                              -#####+-..-###-                    '
+    echo '                   .##-     -###-                                  -###-     -##.                   '
+    echo '                   +## +##+###+                                      +###+##+ ##+                   '
+    echo '                   +#+ ######.                                        .######.+#+                   '
+    echo '                   +## #####                                            #####.##+                   '
+    echo '                   .##.-###.                                             ###+.##-                   '
+    echo '                   .######-                                              -######                    '
+    echo '                    -#####                                                +####-                    '
+    echo '                     ####.                 .-.        .--                 .####                     '
+    echo '                      ###                   +##+    +###                   ###                      '
+    echo '                     .##+     +############-  +##+-###. -############+     +##.                     '
+    echo '                     -##-   +###   .#########+  +###. -#########.   +###   -##-                     '
+    echo '                     +##- -##+.      -+++-  ##+   .  +##. -+++-       +##- -##+                     '
+    echo '                     -##-+##.               +#+      +#+               .##+-##+                     '
+    echo '                     -#####.     +########  +#+      +#+  #########      #####-                     '
+    echo '                      ####.    +##+         +#+      +#+         -##+    .####.                     '
+    echo '                      +###    +##.          +##########+           ###.   +##+                      '
+    echo '                      .###-  ##+             -++####++-             +##  -###.                      '
+    echo '                       -###-##+                .####.                +##-###-                       '
+    echo '                        -#####.                 -##-                 .#####+                        '
+    echo '                          .###-    #+       -+########+-       +#    -###.                          '
+    echo '                            -###+  ############-    -############  +###+                            '
+    echo '                              -####+#######.            .#######+####-                              '
+    echo '                                 +####- +#####++-..--+#####+.-####+                                 '
+    echo '                                   .-.     -+##########+-     .+.                                   '
+    echo -e "${NC}"
+    echo -e "${BOLD}                              PallasOS Installer${NC}"
+    echo -e "${DIM}                                 Alpha Build${NC}"
+    echo ""
+    echo -e "${DIM}========================================================================${NC}"
+    echo ""
+}
+
+msg() {
+    echo -e "${MAGENTA}::${NC} ${WHITE}$1${NC}"
+}
+
+warn() {
+    echo -e "${YELLOW}::${NC} ${WHITE}$1${NC}"
+}
+
+err() {
+    echo -e "${RED}::${NC} ${WHITE}$1${NC}"
+}
+
+ask() {
+    echo -ne "${CYAN}❯${NC} ${WHITE}$1${NC}"
+}
+
+confirm() {
+    ask "$1 [y/N]: "
+    read -r response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
+abort() {
+    err "$1"
+    exit 1
+}
+
+# ============================================================
+#  Pre-checks
+# ============================================================
+
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        abort "Installer harus dijalankan sebagai root. Gunakan: sudo pallas-install"
+    fi
+}
+
+check_boot_mode() {
+    if [[ -d /sys/firmware/efi/efivars ]]; then
+        BOOT_MODE="uefi"
+        msg "Boot mode: UEFI"
+    else
+        BOOT_MODE="bios"
+        msg "Boot mode: BIOS/Legacy"
+    fi
+}
+
+check_internet() {
+    msg "Memeriksa koneksi internet..."
+    if ! ping -c 1 -W 3 archlinux.org &>/dev/null; then
+        err "Tidak ada koneksi internet!"
+        warn "Pastikan Anda terhubung ke internet sebelum melanjutkan."
+        if ! confirm "Lanjutkan tanpa internet?"; then
+            abort "Instalasi dibatalkan."
+        fi
+    else
+        msg "Koneksi internet: OK"
+    fi
+}
+
+# ============================================================
+#  Disk selection
+# ============================================================
+
+select_disk() {
+    echo ""
+    msg "Disk yang tersedia:"
+    echo ""
+    lsblk -d -p -n -o NAME,SIZE,MODEL,TYPE | grep "disk" | while read -r line; do
+        echo "  $line"
+    done
+    echo ""
+
+    local disks
+    disks=$(lsblk -d -p -n -o NAME,TYPE | grep "disk" | awk '{print $1}')
+
+    while true; do
+        ask "Pilih disk target (contoh: /dev/sda): "
+        read -r TARGET_DISK
+
+        if echo "$disks" | grep -qx "$TARGET_DISK"; then
+            local disk_size
+            disk_size=$(lsblk -d -n -o SIZE "$TARGET_DISK" | xargs)
+            warn "SEMUA DATA di ${TARGET_DISK} (${disk_size}) akan DIHAPUS!"
+            if confirm "Lanjutkan?"; then
+                msg "Disk terpilih: ${TARGET_DISK}"
+                break
+            fi
+        else
+            err "Disk '${TARGET_DISK}' tidak valid."
+        fi
+    done
+}
+
+# ============================================================
+#  Configuration
+# ============================================================
+
+configure_timezone() {
+    echo ""
+    msg "Timezone"
+    echo "  Contoh: Asia/Jakarta, America/New_York, Europe/London"
+    ask "Timezone [Asia/Jakarta]: "
+    read -r TIMEZONE
+    TIMEZONE="${TIMEZONE:-Asia/Jakarta}"
+
+    if [[ ! -f "/usr/share/zoneinfo/${TIMEZONE}" ]]; then
+        warn "Timezone '${TIMEZONE}' tidak ditemukan, menggunakan UTC"
+        TIMEZONE="UTC"
+    fi
+    msg "Timezone: ${TIMEZONE}"
+}
+
+configure_locale() {
+    echo ""
+    ask "Locale [en_US.UTF-8]: "
+    read -r input
+    LOCALE="${input:-en_US.UTF-8}"
+    msg "Locale: ${LOCALE}"
+}
+
+configure_keymap() {
+    echo ""
+    ask "Keymap [us]: "
+    read -r input
+    KEYMAP="${input:-us}"
+    msg "Keymap: ${KEYMAP}"
+}
+
+configure_hostname() {
+    echo ""
+    ask "Hostname [pallas]: "
+    read -r input
+    HOSTNAME_VAL="${input:-pallas}"
+    msg "Hostname: ${HOSTNAME_VAL}"
+}
+
+configure_user() {
+    echo ""
+    msg "Buat user baru"
+
+    while true; do
+        ask "Username: "
+        read -r USERNAME
+        if [[ -n "$USERNAME" && "$USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]; then
+            break
+        else
+            err "Username tidak valid. Gunakan huruf kecil, angka, underscore."
+        fi
+    done
+
+    while true; do
+        ask "Password untuk ${USERNAME}: "
+        read -rs USER_PASS
+        echo ""
+        ask "Konfirmasi password: "
+        read -rs user_pass_confirm
+        echo ""
+        if [[ "$USER_PASS" == "$user_pass_confirm" && -n "$USER_PASS" ]]; then
+            break
+        else
+            err "Password tidak cocok atau kosong."
+        fi
+    done
+
+    echo ""
+    msg "Password root"
+    while true; do
+        ask "Password root: "
+        read -rs ROOT_PASS
+        echo ""
+        ask "Konfirmasi password root: "
+        read -rs root_pass_confirm
+        echo ""
+        if [[ "$ROOT_PASS" == "$root_pass_confirm" && -n "$ROOT_PASS" ]]; then
+            break
+        else
+            err "Password tidak cocok atau kosong."
+        fi
+    done
+}
+
+configure_swap() {
+    echo ""
+    local mem_gb
+    mem_gb=$(awk '/MemTotal/ {printf "%.0f", $2/1024/1024}' /proc/meminfo)
+    local suggested=$((mem_gb > 0 ? mem_gb : 2))
+
+    ask "Ukuran swap dalam GB [${suggested}]: "
+    read -r input
+    SWAP_SIZE="${input:-$suggested}"
+    msg "Swap: ${SWAP_SIZE}GB"
+}
+
+# ============================================================
+#  Installation
+# ============================================================
+
+show_summary() {
+    echo ""
+    echo -e "${DIM}========================================================================${NC}"
+    echo -e "${BOLD}  Installation Summary${NC}"
+    echo -e "${DIM}========================================================================${NC}"
+    echo ""
+    echo -e "  Disk       ${MAGENTA}::${NC} ${WHITE}${TARGET_DISK}${NC}"
+    echo -e "  Boot mode  ${MAGENTA}::${NC} ${WHITE}${BOOT_MODE}${NC}"
+    echo -e "  Hostname   ${MAGENTA}::${NC} ${WHITE}${HOSTNAME_VAL}${NC}"
+    echo -e "  Username   ${MAGENTA}::${NC} ${WHITE}${USERNAME}${NC}"
+    echo -e "  Timezone   ${MAGENTA}::${NC} ${WHITE}${TIMEZONE}${NC}"
+    echo -e "  Locale     ${MAGENTA}::${NC} ${WHITE}${LOCALE}${NC}"
+    echo -e "  Keymap     ${MAGENTA}::${NC} ${WHITE}${KEYMAP}${NC}"
+    echo -e "  Swap       ${MAGENTA}::${NC} ${WHITE}${SWAP_SIZE}GB${NC}"
+    echo ""
+    echo -e "${DIM}========================================================================${NC}"
+    echo ""
+}
+
+partition_disk() {
+    msg "Mempartisi disk ${TARGET_DISK}..."
+
+    # Unmount segalanya di target disk sebelum wipe
+    msg "Unmounting existing partitions..."
+    umount -qR /mnt 2>/dev/null || true
+    swapoff -a 2>/dev/null || true
+    lsblk -ln -o NAME "$TARGET_DISK" | grep -v "$(basename "$TARGET_DISK")" | while read -r part; do
+        umount -q "/dev/$part" 2>/dev/null || true
+    done
+
+    # Wipe existing partition table and signatures
+    wipefs -a "$TARGET_DISK" &>/dev/null
+    sgdisk --zap-all "$TARGET_DISK" &>/dev/null
+
+    if [[ "$BOOT_MODE" == "uefi" ]]; then
+        # GPT: EFI (512M) + Swap + Root
+        sgdisk -n 1:0:+512M -t 1:ef00 -c 1:"EFI" "$TARGET_DISK"
+        sgdisk -n 2:0:+${SWAP_SIZE}G -t 2:8200 -c 2:"Swap" "$TARGET_DISK"
+        sgdisk -n 3:0:0 -t 3:8300 -c 3:"PallasOS" "$TARGET_DISK"
+    else
+        # MBR: Boot (512M) + Swap + Root
+        (
+            echo o      # Create new MBR
+            echo n      # New partition (boot)
+            echo p
+            echo 1
+            echo ""
+            echo "+512M"
+            echo a      # Set bootable
+            echo 1
+            echo n      # New partition (swap)
+            echo p
+            echo 2
+            echo ""
+            echo "+${SWAP_SIZE}G"
+            echo t      # Set type
+            echo 2
+            echo 82     # Linux swap
+            echo n      # New partition (root)
+            echo p
+            echo 3
+            echo ""
+            echo ""
+            echo w      # Write
+        ) | fdisk "$TARGET_DISK" &>/dev/null
+    fi
+
+    # Wait for kernel to re-read partition table
+    partprobe "$TARGET_DISK" 2>/dev/null
+    sleep 2
+
+    msg "Partisi selesai."
+}
+
+get_partition() {
+    local disk="$1"
+    local num="$2"
+
+    if [[ "$disk" =~ "nvme" || "$disk" =~ "mmcblk" ]]; then
+        echo "${disk}p${num}"
+    else
+        echo "${disk}${num}"
+    fi
+}
+
+format_partitions() {
+    local part1 part2 part3
+    part1=$(get_partition "$TARGET_DISK" 1)
+    part2=$(get_partition "$TARGET_DISK" 2)
+    part3=$(get_partition "$TARGET_DISK" 3)
+
+    msg "Memformat partisi..."
+
+    if [[ "$BOOT_MODE" == "uefi" ]]; then
+        mkfs.fat -F32 "$part1"
+        msg "EFI partition: FAT32"
+    else
+        mkfs.ext4 -F "$part1"
+        msg "Boot partition: ext4"
+    fi
+
+    mkswap "$part2"
+    swapon "$part2"
+    msg "Swap: aktif"
+
+    mkfs.ext4 -F "$part3"
+    msg "Root partition: ext4"
+}
+
+mount_partitions() {
+    local part1 part3
+    part1=$(get_partition "$TARGET_DISK" 1)
+    part3=$(get_partition "$TARGET_DISK" 3)
+
+    msg "Mounting partisi..."
+
+    mount "$part3" /mnt
+
+    if [[ "$BOOT_MODE" == "uefi" ]]; then
+        mkdir -p /mnt/boot/efi
+        mount "$part1" /mnt/boot/efi
+    else
+        mkdir -p /mnt/boot
+        mount "$part1" /mnt/boot
+    fi
+
+    msg "Partisi mounted."
+}
+
+install_base() {
+    msg "Menginstall base system (ini bisa memakan waktu)..."
+
+    pacstrap -K /mnt \
+        base linux linux-headers linux-firmware \
+        amd-ucode intel-ucode \
+        grub efibootmgr os-prober \
+        networkmanager \
+        mesa vulkan-radeon vulkan-intel \
+        xf86-video-amdgpu xf86-video-ati xf86-video-intel xf86-video-nouveau xf86-video-vesa \
+        alsa-utils pipewire pipewire-alsa pipewire-pulse wireplumber \
+        bluez bluez-utils \
+        dosfstools e2fsprogs btrfs-progs ntfs-3g xfsprogs \
+        sudo nano vim htop wget curl git \
+        bash-completion man-db man-pages \
+        wpa_supplicant wireless_tools iwd dhcpcd \
+        reflector
+
+    echo ""
+
+    msg "Base system terinstall."
+}
+
+generate_fstab() {
+    msg "Generating fstab..."
+    genfstab -U /mnt >> /mnt/etc/fstab
+    msg "fstab generated."
+}
+
+configure_system() {
+    msg "Mengkonfigurasi sistem..."
+
+    # Timezone
+    arch-chroot /mnt ln -sf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime
+    arch-chroot /mnt hwclock --systohc
+
+    # Locale
+    echo "${LOCALE} UTF-8" >> /mnt/etc/locale.gen
+    arch-chroot /mnt locale-gen
+    echo "LANG=${LOCALE}" > /mnt/etc/locale.conf
+
+    # Keymap
+    echo "KEYMAP=${KEYMAP}" > /mnt/etc/vconsole.conf
+
+    # Hostname
+    echo "${HOSTNAME_VAL}" > /mnt/etc/hostname
+    cat > /mnt/etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   ${HOSTNAME_VAL}.localdomain ${HOSTNAME_VAL}
+EOF
+
+    # Root password
+    echo "root:${ROOT_PASS}" | arch-chroot /mnt chpasswd
+
+    # Create user
+    arch-chroot /mnt useradd -m -G wheel,audio,video,storage,network -s /bin/bash "${USERNAME}"
+    echo "${USERNAME}:${USER_PASS}" | arch-chroot /mnt chpasswd
+
+    # Enable sudo for wheel group
+    sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
+
+    # Enable services
+    arch-chroot /mnt systemctl enable NetworkManager
+    arch-chroot /mnt systemctl enable bluetooth
+    arch-chroot /mnt systemctl enable sshd 2>/dev/null || true
+
+    msg "Sistem dikonfigurasi."
+}
+
+install_bootloader() {
+    msg "Menginstall bootloader..."
+
+    if [[ "$BOOT_MODE" == "uefi" ]]; then
+        arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=PallasOS --recheck
+    else
+        arch-chroot /mnt grub-install --target=i386-pc --recheck "$TARGET_DISK"
+    fi
+
+    # Customize GRUB
+    sed -i 's/GRUB_DISTRIBUTOR="Arch"/GRUB_DISTRIBUTOR="PallasOS"/' /mnt/etc/default/grub
+    sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=10/' /mnt/etc/default/grub
+    
+    # Uncomment GRUB_DISABLE_OS_PROBER=false to enable dual-boot detection
+    if grep -q "GRUB_DISABLE_OS_PROBER=false" /mnt/etc/default/grub; then
+        sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /mnt/etc/default/grub
+    else
+        echo "GRUB_DISABLE_OS_PROBER=false" >> /mnt/etc/default/grub
+    fi
+
+    arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+    msg "Bootloader terinstall."
+}
+
+apply_branding() {
+    msg "Menerapkan branding PallasOS..."
+
+    # os-release
+    cat > /mnt/etc/os-release <<'EOF'
+NAME="PallasOS"
+PRETTY_NAME="PallasOS Alpha"
+ID=pallasos
+BUILD_ID=alpha
+ANSI_COLOR="0;36"
+HOME_URL="https://github.com/broman0x/pallasos-linux"
+SUPPORT_URL="https://github.com/broman0x/pallasos-linux/issues"
+BUG_REPORT_URL="https://github.com/broman0x/pallasos-linux/issues"
+EOF
+
+    # /etc/issue
+    echo "PallasOS Alpha" > /mnt/etc/issue
+
+    # MOTD
+    cat > /mnt/etc/motd <<'EOF'
+==================================
+        Welcome to PallasOS
+==================================
+EOF
+
+    # Login banner & prompt
+    mkdir -p /mnt/etc/profile.d
+    cat > /mnt/etc/profile.d/pallas.sh <<'BANNER'
+#!/bin/bash
+# PallasOS login banner and prompt — only for interactive shells
+
+if [[ $- == *i* ]]; then
+    echo ''
+    echo '                                         .-+############+-.                                         '
+    echo '                                     .########################.                                     '
+    echo '                                  -#####+-.              .-+#####-                                  '
+    echo '                      +########-#####-                        .#####-########+                      '
+    echo '                    .###-..-+#####+                              -#####+-..-###-                    '
+    echo '                   .##-     -###-                                  -###-     -##.                   '
+    echo '                   +## +##+###+                                      +###+##+ ##+                   '
+    echo '                   +#+ ######.                                        .######.+#+                   '
+    echo '                   +## #####                                            #####.##+                   '
+    echo '                   .##.-###.                                             ###+.##-                   '
+    echo '                   .######-                                              -######                    '
+    echo '                    -#####                                                +####-                    '
+    echo '                     ####.                 .-.        .--                 .####                     '
+    echo '                      ###                   +##+    +###                   ###                      '
+    echo '                     .##+     +############-  +##+-###. -############+     +##.                     '
+    echo '                     -##-   +###   .#########+  +###. -#########.   +###   -##-                     '
+    echo '                     +##- -##+.      -+++-  ##+   .  +##. -+++-       +##- -##+                     '
+    echo '                     -##-+##.               +#+      +#+               .##+-##+                     '
+    echo '                     -#####.     +########  +#+      +#+  #########      #####-                     '
+    echo '                      ####.    +##+         +#+      +#+         -##+    .####.                     '
+    echo '                      +###    +##.          +##########+           ###.   +##+                      '
+    echo '                      .###-  ##+             -++####++-             +##  -###.                      '
+    echo '                       -###-##+                .####.                +##-###-                       '
+    echo '                        -#####.                 -##-                 .#####+                        '
+    echo '                          .###-    #+       -+########+-       +#    -###.                          '
+    echo '                            -###+  ############-    -############  +###+                            '
+    echo '                              -####+#######.            .#######+####-                              '
+    echo '                                 +####- +#####++-..--+#####+.-####+                                 '
+    echo '                                   .-.     -+##########+-     .+.                                   '
+    echo ''
+    echo '                                           PallasOS Alpha'
+    echo '                                         Based on Arch Linux'
+    echo ''
+
+    # Set PallasOS bash prompt
+    if [ "$(id -u)" -eq 0 ]; then
+        PS1='\[\e[1;31m\]\u@pallas\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]# '
+    else
+        PS1='\[\e[1;32m\]\u@pallas\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '
+    fi
+fi
+BANNER
+    chmod +x /mnt/etc/profile.d/pallas.sh
+
+    msg "Branding PallasOS diterapkan."
+}
+
+cleanup() {
+    msg "Membersihkan..."
+    umount -R /mnt 2>/dev/null || true
+    swapoff -a 2>/dev/null || true
+}
+
+# ============================================================
+#  Main
+# ============================================================
+
+main() {
+    print_banner
+    check_root
+    check_boot_mode
+    check_internet
+
+    select_disk
+    configure_timezone
+    configure_locale
+    configure_keymap
+    configure_hostname
+    configure_user
+    configure_swap
+
+    show_summary
+
+    if ! confirm "Mulai instalasi?"; then
+        abort "Instalasi dibatalkan."
+    fi
+
+    echo ""
+    msg "Memulai instalasi PallasOS..."
+    echo ""
+
+    partition_disk
+    format_partitions
+    mount_partitions
+    install_base
+    generate_fstab
+    configure_system
+    install_bootloader
+    apply_branding
+
+    cleanup
+
+    echo ""
+    echo -e "${DIM}========================================================================${NC}"
+    echo -e "${MAGENTA}${BOLD}"
+    echo "   PallasOS Installation Complete!"
+    echo -e "${NC}"
+    echo -e "   User    ${MAGENTA}::${NC} ${WHITE}${USERNAME}${NC}"
+    echo -e "   Host    ${MAGENTA}::${NC} ${WHITE}${HOSTNAME_VAL}${NC}"
+    echo ""
+    echo -e "   You can now remove the installation media and reboot:"
+    echo -e "   ${WHITE}${BOLD}reboot${NC}"
+    echo -e "${DIM}========================================================================${NC}"
+    echo ""
+}
+
+# Trap for cleanup on error
+trap 'err "Terjadi error. Membersihkan..."; cleanup; exit 1' ERR
+
+main "$@"
