@@ -16,5 +16,5 @@ if ! id -u pallas >/dev/null 2>&1; then
     chmod 0440 /etc/sudoers.d/99-pallas-wheel
 fi
 
-# Enable LightDM if not enabled
-systemctl enable lightdm 2>/dev/null || true
+# Enable SDDM if not enabled
+systemctl enable sddm 2>/dev/null || true

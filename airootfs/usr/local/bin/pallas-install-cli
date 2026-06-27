@@ -465,7 +465,7 @@ EOF
     arch-chroot /mnt systemctl enable NetworkManager
     arch-chroot /mnt systemctl enable bluetooth
     arch-chroot /mnt systemctl enable sshd 2>/dev/null || true
-    arch-chroot /mnt systemctl enable lightdm 2>/dev/null || true
+    arch-chroot /mnt systemctl enable sddm 2>/dev/null || true
 
     msg "Sistem dikonfigurasi."
 }
