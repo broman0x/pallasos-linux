@@ -32,7 +32,7 @@ FORM_DATA=$(yad --title="PallasOS Installer - Welcome" \
     --separator="|" \
     --width=750 \
     --borders=15 \
-    --field="Target Disk (Data Akan Dihapus):CB" "$DISKS" \
+    --field="Target Disk:CB" "$DISKS" \
     --field="Timezone:CB" "$TIMEZONES" \
     --field="Locale:CB" "en_US.UTF-8!id_ID.UTF-8" \
     --field="Keymap:CB" "us!uk" \
