@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Install Build Dependencies
         run: |
-          pacman -Syu --noconfirm git archiso grub mtools dosfstools fatattr libisoburn erofs-utils
+          pacman -Syu --noconfirm git archiso grub mtools dosfstools libisoburn erofs-utils
 
       - name: Checkout Repository
         uses: actions/checkout@v4

@@ -24,7 +24,6 @@ PallasOS adalah distribusi Linux yang dibangun menggunakan profil dasar ArchISO.
   - Audio: Server media PipeWire dan Alsa.
   - Sistem Berkas (Filesystem): Btrfs, Ext4, NTFS, dan XFS.
 - **Kesiapan Lingkungan Live:** Lingkungan Live ISO dikonfigurasi dengan inisialisasi PGP key *pacman* secara otomatis saat *booting*, memungkinkan pengunduhan paket secara langsung tanpa konfigurasi tambahan.
-- **Branding Khusus:** Modifikasi *prompt* login, logo *bootloader*, dan struktur identitas sistem disesuaikan dengan tema PallasOS.
 
 ## Prosedur Pembuatan (Build) ISO
 
