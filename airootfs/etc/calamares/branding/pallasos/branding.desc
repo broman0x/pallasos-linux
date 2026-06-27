@@ -14,17 +14,15 @@ strings:
     bootloaderEntryName: PallasOS
 
 images:
-    productLogo:         "logo.png"
-    productIcon:         "logo.png"
-    productWelcome:      "logo.png"
+    productLogo:         "logo-light.png"
+    productIcon:         "logo-light.png"
+    productWelcome:      "logo-light.png"
 
 style:
-   sidebarBackground:    "#1e1e2e"
+   sidebarBackground:    "#11111b"
    sidebarText:          "#cdd6f4"
    sidebarTextSelect:    "#89b4fa"
    sidebarTextHighlight: "#89b4fa"
-
-stylesheet: "stylesheet.qss"
 
 slideshow:               "show.qml"
 slideshowAPI: 2
