@@ -8,3 +8,4 @@ script:
     - "rm -f /etc/systemd/system/pallas-live-setup.service"
     - "rm -f /etc/systemd/system/pacman-init.service"
     - "rm -f /etc/sddm.conf.d/autologin.conf"
+    - "for f in /boot/*; do if [ -f \"$f\" ]; then mv \"$f\" \"$f.tmp\"; touch \"$f\"; chattr +C \"$f\" 2>/dev/null || true; cat \"$f.tmp\" > \"$f\"; rm -f \"$f.tmp\"; fi; done"
