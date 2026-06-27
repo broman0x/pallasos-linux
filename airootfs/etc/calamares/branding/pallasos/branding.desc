@@ -23,3 +23,6 @@ style:
    sidebarText:          "#cdd6f4"
    sidebarTextSelect:    "#89b4fa"
    sidebarTextHighlight: "#89b4fa"
+
+slideshow:               "show.qml"
+slideshowAPI: 2
