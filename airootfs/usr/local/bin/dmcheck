@@ -1,0 +1,6 @@
+#!/bin/bash
+# Dummy dmcheck script to satisfy CachyOS Calamares fork
+# PallasOS uses SDDM, so we ensure it is enabled in the target
+
+systemctl enable sddm.service --root="$1" 2>/dev/null || true
+exit 0
