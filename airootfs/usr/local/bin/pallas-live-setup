@@ -17,3 +17,13 @@ fi
 
 # Enable SDDM if not enabled
 systemctl enable sddm 2>/dev/null || true
+
+# Apply custom Calamares configurations
+if [ -f /etc/calamares/settings.conf.custom ]; then
+    mv /etc/calamares/settings.conf.custom /etc/calamares/settings.conf
+fi
+for custom_mod in /etc/calamares/modules/*.conf.custom; do
+    if [ -f "$custom_mod" ]; then
+        mv "$custom_mod" "${custom_mod%.custom}"
+    fi
+done
