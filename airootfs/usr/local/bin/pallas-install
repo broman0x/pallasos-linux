@@ -56,7 +56,7 @@ export HOSTNAME_VAL=$(echo "$FORM_DATA" | awk -F '|' '{print $5}')
 export USERNAME=$(echo "$FORM_DATA" | awk -F '|' '{print $6}')
 export USER_PASS=$(echo "$FORM_DATA" | awk -F '|' '{print $7}')
 export ROOT_PASS=$(echo "$FORM_DATA" | awk -F '|' '{print $8}')
-export SWAP_SIZE=$(echo "$FORM_DATA" | awk -F '|' '{print $9}' | awk -F ',' '{print $1}')
+export SWAP_SIZE=$(echo "$FORM_DATA" | awk -F '|' '{print $9}' | awk -F '[,.]' '{print $1}')
 export AUTO_INSTALL=1
 
 # Validate inputs
@@ -71,18 +71,18 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Run CLI installer in background and pipe output to Yad progress
-pallas-install-cli 2>&1 | stdbuf -oL tr '\r' '\n' | yad --progress \
+pallas-install-cli 2>&1 | tee /tmp/pallas-install.log | stdbuf -oL tr '\r' '\n' | yad --progress \
     --title="Menginstall PallasOS..." \
     --text="Proses instalasi sedang berjalan, mohon tunggu..." \
     --pulsate --auto-close --auto-kill \
     --width=600 --height=100 \
     --button="Batal:1"
 
-if [[ $? -eq 0 ]]; then
+if [[ ${PIPESTATUS[0]} -eq 0 ]]; then
     yad --info --title="Instalasi Selesai" --text="PallasOS berhasil diinstall!\nSilakan cabut flashdisk dan restart komputer Anda." --button="Reboot Sekarang:0" --button="Nanti:1"
     if [[ $? -eq 0 ]]; then
         reboot
     fi
 else
-    yad --error --title="Instalasi Gagal" --text="Terjadi kesalahan saat menginstall PallasOS. Silakan cek log di terminal."
+    yad --error --title="Instalasi Gagal" --text="Terjadi kesalahan saat menginstall PallasOS.\nSilakan cek log di <b>/tmp/pallas-install.log</b> untuk detail lebih lanjut."
 fi
