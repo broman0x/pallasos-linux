@@ -1,5 +1,5 @@
 # Configuration file for Calamares
-modules-search: [ local ]
+modules-search: [ local, /usr/lib/calamares/modules ]
 
 instances:
 - id:       install

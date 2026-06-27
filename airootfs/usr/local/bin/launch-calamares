@@ -1,5 +1,16 @@
 #!/bin/bash
-# Wrapper to launch Calamares as root in the live environment
-# Allow root to access the X11 display
-xhost +si:localuser:root 2>/dev/null || true
-exec sudo -E /usr/bin/calamares "$@"
+# Launch Calamares and capture errors
+LOG="/tmp/calamares-error.log"
+calamares 2>&1 | tee "$LOG"
+EXIT_CODE=${PIPESTATUS[0]}
+
+if [ $EXIT_CODE -ne 0 ]; then
+    # Show error to user if calamares crashed
+    if command -v kdialog &>/dev/null; then
+        kdialog --error "Calamares gagal dibuka.\n\nError:\n$(tail -20 $LOG)" --title "PallasOS Installer Error"
+    elif command -v xmessage &>/dev/null; then
+        xmessage -center "Calamares gagal dibuka. Lihat $LOG"
+    fi
+    echo -e "\nTekan ENTER untuk menutup..."
+    read
+fi
