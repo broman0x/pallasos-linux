@@ -8,4 +8,5 @@ defaults:
     GRUB_TERMINAL_OUTPUT: "gfxterm"
     GRUB_DISABLE_RECOVERY: true
     GRUB_THEME: "/usr/share/grub/themes/pallasos/theme.txt"
+    GRUB_DISTRIBUTOR: "PallasOS"
     GRUB_CMDLINE_LINUX_DEFAULT: "quiet splash loglevel=3"
