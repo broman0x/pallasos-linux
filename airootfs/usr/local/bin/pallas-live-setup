@@ -7,8 +7,8 @@ if ! id -u pallas >/dev/null 2>&1; then
     
     useradd -m -g users -G wheel,video,audio,storage,optical -s /bin/bash pallas
     
-    # Set empty password
-    passwd -d pallas
+    # Set a default password so SDDM does not hide the user
+    echo "pallas:live" | chpasswd
     
     # Allow passwordless sudo for wheel group
     echo "%wheel ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-pallas-wheel

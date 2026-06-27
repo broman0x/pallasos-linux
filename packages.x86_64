@@ -81,6 +81,9 @@ kitty-terminfo
 arch-install-scripts
 
 # Desktop Environment (KDE Plasma)
+xorg-server
+xorg-xinit
+plasma-workspace-x11
 plasma-desktop
 sddm
 konsole
