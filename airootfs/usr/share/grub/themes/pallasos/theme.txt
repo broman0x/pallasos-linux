@@ -9,6 +9,14 @@ message-font: "Terminus Regular 16"
 message-color: "#7f8c8d"
 message-bg-color: "#4d4d4d"
 
++ image {
+    left = 43%
+    top = 15%
+    width = 256
+    height = 256
+    file = "logo.png"
+}
+
 + boot_menu {
     left = 35%
     top = 40%
