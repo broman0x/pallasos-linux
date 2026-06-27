@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = plymouth
+Target = cachyos-calamares
+
+[Action]
+Description = Applying PallasOS Plymouth Watermark...
+When = PostTransaction
+Exec = /usr/bin/cp -f /etc/plymouth/pallas-logo.png /usr/share/plymouth/themes/spinner/watermark.png
