@@ -1,0 +1,12 @@
+[Unit]
+Description=PallasOS Live Environment Setup
+Before=lightdm.service
+ConditionPathExists=/run/archiso/bootmnt
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/pallas-live-setup
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target

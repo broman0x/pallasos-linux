@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install PallasOS
+Comment=Mulai instalasi PallasOS ke Hardisk
+Exec=sudo /usr/local/bin/pallas-install
+Icon=drive-harddisk
+Terminal=false
+Categories=System;
+StartupNotify=true

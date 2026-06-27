@@ -79,3 +79,16 @@ qemu-guest-agent
 virtualbox-guest-utils-nox
 kitty-terminfo
 arch-install-scripts
+
+# Desktop Environment (XFCE)
+xorg-server
+xorg-xinit
+xfce4
+xfce4-goodies
+lightdm
+lightdm-gtk-greeter
+materia-gtk-theme
+papirus-icon-theme
+network-manager-applet
+pavucontrol
+yad
