@@ -33,7 +33,7 @@ SWAP_SIZE="${SWAP_SIZE:-2}"
 # ============================================================
 
 print_banner() {
-    clear
+    clear 2>/dev/null || true
     echo -e "${WHITE}"
     echo '                                         .-+############+-.                                         '
     echo '                                     .########################.                                     '
@@ -124,8 +124,10 @@ check_internet() {
     if ! ping -c 1 -W 3 archlinux.org &>/dev/null; then
         err "Tidak ada koneksi internet!"
         warn "Pastikan Anda terhubung ke internet sebelum melanjutkan."
-        if ! confirm "Lanjutkan tanpa internet?"; then
-            abort "Instalasi dibatalkan."
+        if [[ "$AUTO_INSTALL" != "1" ]]; then
+            if ! confirm "Lanjutkan tanpa internet?"; then
+                abort "Instalasi dibatalkan."
+            fi
         fi
     else
         msg "Koneksi internet: OK"
