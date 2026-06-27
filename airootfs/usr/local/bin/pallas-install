@@ -70,13 +70,13 @@ if [[ $? -ne 0 ]]; then
     exit 0
 fi
 
-# Run CLI installer in background and pipe output to Yad progress
-pallas-install-cli 2>&1 | tee /tmp/pallas-install.log | stdbuf -oL tr '\r' '\n' | yad --progress \
+# Run CLI installer in background and pipe output to Yad
+pallas-install-cli 2>&1 | tee /tmp/pallas-install.log | stdbuf -oL tr '\r' '\n' | yad --text-info \
+    --tail \
     --title="Menginstall PallasOS..." \
-    --text="Proses instalasi sedang berjalan, mohon tunggu..." \
-    --pulsate --auto-close --auto-kill \
-    --width=600 --height=100 \
-    --button="Batal:1"
+    --text="Proses instalasi sedang berjalan. Silakan pantau log di bawah ini:" \
+    --width=700 --height=500 \
+    --button="Tutup:0"
 
 if [[ ${PIPESTATUS[0]} -eq 0 ]]; then
     yad --info --title="Instalasi Selesai" --text="PallasOS berhasil diinstall!\nSilakan cabut flashdisk dan restart komputer Anda." --button="Reboot Sekarang:0" --button="Nanti:1"
