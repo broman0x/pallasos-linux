@@ -74,14 +74,17 @@ print_banner() {
 
 msg() {
     echo -e "${MAGENTA}::${NC} ${WHITE}$1${NC}"
+    [[ "$AUTO_INSTALL" == "1" ]] && echo "# $1"
 }
 
 warn() {
     echo -e "${YELLOW}::${NC} ${WHITE}$1${NC}"
+    [[ "$AUTO_INSTALL" == "1" ]] && echo "# PERINGATAN: $1"
 }
 
 err() {
     echo -e "${RED}::${NC} ${WHITE}$1${NC}"
+    [[ "$AUTO_INSTALL" == "1" ]] && echo "# ERROR: $1"
 }
 
 ask() {
@@ -406,9 +409,9 @@ install_base() {
 
     # Update keyring first to prevent PGP signature errors during pacstrap
     msg "Updating archlinux-keyring..."
-    pacman -Sy --noconfirm archlinux-keyring || true
+    script -q -e -c "pacman -Sy --noconfirm archlinux-keyring" /dev/null || true
 
-    pacstrap -K /mnt \
+    script -q -e -c "pacstrap -K /mnt \
         base linux linux-headers linux-firmware \
         amd-ucode intel-ucode \
         grub efibootmgr os-prober \
@@ -422,7 +425,7 @@ install_base() {
         bash-completion man-db man-pages \
         wpa_supplicant wireless_tools iwd dhcpcd \
         reflector \
-        plasma-desktop plasma-nm plasma-pa sddm konsole dolphin
+        plasma-desktop plasma-nm plasma-pa sddm konsole dolphin" /dev/null
 
     echo ""
 
