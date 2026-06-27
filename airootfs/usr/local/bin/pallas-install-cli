@@ -17,16 +17,16 @@ RED='\033[1;31m'
 YELLOW='\033[1;33m'
 
 # Globals
-TARGET_DISK=""
-BOOT_MODE=""
-HOSTNAME_VAL="pallas"
-USERNAME=""
-USER_PASS=""
-ROOT_PASS=""
-TIMEZONE=""
-LOCALE="en_US.UTF-8"
-KEYMAP="us"
-SWAP_SIZE=""
+TARGET_DISK="${TARGET_DISK:-}"
+BOOT_MODE="${BOOT_MODE:-}"
+HOSTNAME_VAL="${HOSTNAME_VAL:-pallas}"
+USERNAME="${USERNAME:-}"
+USER_PASS="${USER_PASS:-}"
+ROOT_PASS="${ROOT_PASS:-}"
+TIMEZONE="${TIMEZONE:-Asia/Jakarta}"
+LOCALE="${LOCALE:-en_US.UTF-8}"
+KEYMAP="${KEYMAP:-us}"
+SWAP_SIZE="${SWAP_SIZE:-2}"
 
 # ============================================================
 #  Helper functions
@@ -482,6 +482,16 @@ install_bootloader() {
     # Customize GRUB
     sed -i 's/GRUB_DISTRIBUTOR="Arch"/GRUB_DISTRIBUTOR="PallasOS"/' /mnt/etc/default/grub
     sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=10/' /mnt/etc/default/grub
+    
+    # Set GRUB Background
+    if ! grep -q "GRUB_BACKGROUND" /mnt/etc/default/grub; then
+        echo 'GRUB_BACKGROUND="/usr/share/backgrounds/pallas-grub.png"' >> /mnt/etc/default/grub
+    else
+        sed -i 's|^#*GRUB_BACKGROUND=.*|GRUB_BACKGROUND="/usr/share/backgrounds/pallas-grub.png"|' /mnt/etc/default/grub
+    fi
+    
+    # Update GRUB Config
+    arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
     
     # Uncomment GRUB_DISABLE_OS_PROBER=false to enable dual-boot detection
     if grep -q "GRUB_DISABLE_OS_PROBER=false" /mnt/etc/default/grub; then

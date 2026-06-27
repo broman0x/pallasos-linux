@@ -6,7 +6,7 @@ iso_label="PALLASOS"
 iso_publisher="PallasOS Project"
 iso_application="PallasOS Live ISO"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-install_dir="arch"
+install_dir="pallas"
 buildmodes=('iso')
 bootmodes=('bios.syslinux'
            'uefi.grub')
