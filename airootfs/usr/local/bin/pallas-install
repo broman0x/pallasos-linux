@@ -25,7 +25,7 @@ TIMEZONES="Asia/Jakarta!America/New_York!Europe/London!UTC"
 # Run Yad Form
 FORM_DATA=$(yad --title="PallasOS Installer - Welcome" \
     --window-icon="drive-harddisk" \
-    --image="/usr/share/backgrounds/pallas-grub.png" \
+    --image="/usr/share/pixmaps/pallasos-logo.png" \
     --image-on-top \
     --text="<span font='14' weight='bold'>PallasOS Installer</span>\nSilakan lengkapi konfigurasi instalasi PallasOS di bawah ini:" \
     --form --columns=2 \

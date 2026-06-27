@@ -509,6 +509,14 @@ apply_branding() {
     msg "Menerapkan branding PallasOS..."
 
     # os-release
+    cp /etc/os-release /mnt/etc/os-release
+    
+    # Copy assets
+    mkdir -p /mnt/usr/share/pixmaps /mnt/usr/share/backgrounds /mnt/usr/share/icons/hicolor/256x256/apps
+    cp /usr/share/pixmaps/pallasos-logo.png /mnt/usr/share/pixmaps/ 2>/dev/null || true
+    cp /usr/share/pixmaps/pallasos-logo.png /mnt/usr/share/icons/hicolor/256x256/apps/ 2>/dev/null || true
+    cp /usr/share/backgrounds/pallas-grub.png /mnt/usr/share/backgrounds/ 2>/dev/null || true
+    
     cat > /mnt/etc/os-release <<'EOF'
 NAME="PallasOS"
 PRETTY_NAME="PallasOS Alpha"
@@ -518,6 +526,7 @@ ANSI_COLOR="0;36"
 HOME_URL="https://github.com/broman0x/pallasos-linux"
 SUPPORT_URL="https://github.com/broman0x/pallasos-linux/issues"
 BUG_REPORT_URL="https://github.com/broman0x/pallasos-linux/issues"
+LOGO="pallasos-logo"
 EOF
 
     # /etc/issue
