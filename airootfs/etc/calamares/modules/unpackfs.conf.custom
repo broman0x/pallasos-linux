@@ -1,7 +1,7 @@
 # Unpackfs module config for PallasOS
 unpack:
     -   source: /run/archiso/bootmnt/pallas/x86_64/airootfs.sfs
-        sourcefs: squashfs
+        sourcefs: erofs
         destination: ""
     -   source: /run/archiso/bootmnt/pallas/boot/x86_64/vmlinuz-linux
         sourcefs: file

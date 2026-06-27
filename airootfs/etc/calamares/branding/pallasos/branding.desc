@@ -24,5 +24,7 @@ style:
    sidebarTextSelect:    "#89b4fa"
    sidebarTextHighlight: "#89b4fa"
 
+stylesheet: "stylesheet.qss"
+
 slideshow:               "show.qml"
 slideshowAPI: 2

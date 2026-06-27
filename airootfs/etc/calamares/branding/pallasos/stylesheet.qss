@@ -1,0 +1,49 @@
+/* PallasOS Calamares Stylesheet */
+QWidget {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+}
+
+QDialog {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+}
+
+#sidebarApp {
+    background-color: #11111b;
+}
+
+#logoApp {
+    background: transparent;
+}
+
+QLabel {
+    color: #cdd6f4;
+    background: transparent;
+}
+
+QPushButton {
+    background-color: #313244;
+    color: #cdd6f4;
+    border: 1px solid #45475a;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #45475a;
+    border-color: #89b4fa;
+}
+
+QProgressBar {
+    background-color: #313244;
+    border: 1px solid #45475a;
+    border-radius: 4px;
+    text-align: center;
+    color: #cdd6f4;
+}
+
+QProgressBar::chunk {
+    background-color: #89b4fa;
+    border-radius: 3px;
+}
