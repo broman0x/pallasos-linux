@@ -1,0 +1,42 @@
+name: Build and Release PallasOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag (contoh: v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-release:
+    name: Build ISO & Release
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - name: Install Build Dependencies
+        run: |
+          pacman -Syu --noconfirm git archiso
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build PallasOS ISO
+        run: |
+          rm -rf work/ out/
+          # Build ISO
+          mkarchiso -v -w work/ -o out/ .
+
+      - name: Upload ISO to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.tag }}
+          name: PallasOS ${{ github.event.inputs.tag }}
+          files: out/*.iso
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
