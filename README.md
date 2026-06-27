@@ -18,6 +18,9 @@
 
 ---
 
+> [!WARNING]
+> **Peringatan Status Rilis:** PallasOS saat ini masih berada dalam fase **Alpha (Tahap Pengujian)**. Versi ini ditujukan untuk keperluan *testing* dan eksperimen, serta mungkin mengandung *bug* atau ketidakstabilan. Sangat tidak disarankan untuk digunakan sebagai sistem utama (daily driver) pada mesin produksi Anda.
+
 ## Tentang PallasOS
 
 **PallasOS** adalah distribusi Linux yang dibangun di atas fondasi Arch Linux. Proyek ini bertujuan untuk menyediakan sistem operasi yang ringan, modern, dan mudah digunakan, tanpa menghilangkan kebebasan kustomisasi yang menjadi ciri khas Arch Linux.
