@@ -20,43 +20,42 @@
 
 ## ✦ Tentang PallasOS
 
-**PallasOS** adalah sistem operasi turunan Arch Linux yang dikembangkan untuk menyederhanakan proses instalasi dan konfigurasi awal. Kami merancang distro ini agar pengguna dapat langsung menggunakan sistem Arch Linux secara efisien tanpa harus melewati proses instalasi baris perintah (CLI) yang rumit.
+**PallasOS** adalah distribusi Linux yang dibangun di atas fondasi Arch Linux. Proyek ini bertujuan untuk menyediakan sistem operasi yang ringan, modern, dan mudah digunakan, tanpa menghilangkan kebebasan kostumisasi yang menjadi ciri khas Arch Linux.
 
-Dengan menyediakan lingkungan grafis (KDE Plasma) secara langsung pada sesi Live USB dan menyertakan installer otomatis, PallasOS ditujukan bagi pengguna yang menginginkan sistem berbasis Arch Linux dengan pengaturan awal (out-of-the-box) yang siap digunakan.
+PallasOS hadir dengan lingkungan desktop **KDE Plasma** dan menggunakan **Calamares** sebagai installer utama, sehingga proses instalasi menjadi jauh lebih intuitif dan ramah bagi pengguna dari berbagai tingkat keahlian.
 
 ## ✦ Fitur Utama
 
-- ✨ **Sesi Live Desktop:** PallasOS langsung menampilkan antarmuka desktop KDE Plasma saat Live USB dijalankan, mempermudah akses ke berbagai alat sistem sebelum instalasi.
-- 🚀 **Instalasi Grafis (GUI):** Menggunakan *Calamares Installer* yang memudahkan pengaturan partisi, pembuatan pengguna, serta konfigurasi zona waktu secara visual dan otomatis.
-- ⚡ **Optimasi Live USB:** Media Live menggunakan *filesystem* **EROFS** yang memastikan proses baca data berjalan lebih cepat dan responsif.
-- 🎨 **Tema Terintegrasi:** Tampilan instalasi, bootloader GRUB, animasi Plymouth, dan desktop telah diatur sedemikian rupa dengan tema bernuansa *Catppuccin Macchiato* untuk kenyamanan visual.
-- 🛠️ **Pengalaman Tanpa Hambatan:** Sesi Live USB diatur untuk melakukan *autologin* sebagai `root`, sehingga Anda dapat mengeksekusi proses sistem atau instalasi tanpa terganggu oleh permintaan kata sandi.
+- 🖥️ **KDE Plasma Desktop:** Menggunakan antarmuka KDE Plasma yang modern, responsif, dan sangat dapat dikustomisasi, memberikan kenyamanan maksimal untuk penggunaan sehari-hari.
+- ⚙️ **Instalasi Mudah (Calamares):** Dilengkapi dengan antarmuka grafis (GUI) yang memandu Anda mengatur partisi, zona waktu, dan akun pengguna dengan sangat mudah.
+- 🎨 **Tampilan Konsisten:** Menyertakan palet warna *Catppuccin Macchiato* yang elegan, dipadukan dengan kustomisasi ikon dan bootloader yang rapi untuk kenyamanan visual sejak komputer dinyalakan.
+- 📦 **Ekosistem Arch Linux:** Mewarisi kecepatan, stabilitas, dan akses penuh ke repositori AUR (Arch User Repository) yang sangat luas.
 
 ## ✦ Panduan Instalasi
 
 1. **Unduh & Flash:** Unduh file `.iso` terbaru dari halaman [Releases](#) dan tulis (*flash*) ke dalam *flashdrive* menggunakan aplikasi seperti [balenaEtcher](https://etcher.balena.io/), [Rufus](https://rufus.ie/), atau [Ventoy](https://www.ventoy.net/).
-2. **Boot Sistem:** Lakukan proses *booting* melalui *flashdrive* tersebut. Pilih opsi PallasOS Live pada menu GRUB.
-3. **Mulai Instalasi:** Setelah masuk ke desktop KDE Plasma, klik ganda pada pintasan **"Install PallasOS"** yang tersedia di layar utama (Desktop).
-4. **Ikuti Petunjuk:** Installer Calamares akan memandu Anda untuk mengatur partisi dan sistem.
-5. **Selesai:** Setelah instalasi berstatus sukses, lakukan *restart*. Sistem otomatis akan memuat OS yang baru saja diinstal di *hard disk* Anda.
+2. **Boot Sistem:** Lakukan *booting* melalui *flashdrive* tersebut.
+3. **Mulai Instalasi:** Setelah masuk ke Live Desktop, klik ganda pada pintasan **"Install PallasOS"** yang tersedia di layar.
+4. **Ikuti Petunjuk:** Installer akan memandu Anda menyelesaikan proses pengaturan ke *hard disk*.
+5. **Selesai:** *Restart* komputer Anda untuk mulai menggunakan PallasOS secara penuh.
 
 ## ✦ Kompilasi Mandiri (Build)
 
-Jika Anda ingin merakit file ISO PallasOS secara mandiri atau melakukan modifikasi, Anda bisa menggunakan perkakas bawaan Arch Linux. Pastikan sistem Anda telah terpasang paket `archiso`.
+Jika Anda ingin merakit file ISO PallasOS secara mandiri, pastikan Anda menjalankannya pada sistem Arch Linux yang telah terpasang paket `archiso`.
 
 ```bash
 # 1. Klon repositori ini
 git clone https://github.com/broman0x/pallasos-linux.git
 cd pallasos-linux
 
-# 2. Hapus sisa cache jika Anda pernah melakukan kompilasi sebelumnya
+# 2. Hapus sisa direktori build sebelumnya (jika ada)
 sudo rm -rf work/ out/
 
-# 3. Rakit ISO
+# 3. Mulai proses build
 sudo mkarchiso -v -w work/ -o out/ .
 ```
 File ISO akan secara otomatis dihasilkan di dalam folder `out/`.
 
 ## ✦ Lisensi
 
-Repositori PallasOS terbuka untuk publik dan dilisensikan di bawah lisensi *open-source*. Anda bebas untuk berkontribusi, memodifikasi, maupun membangun ulang sistem ini sesuai kebutuhan.
+PallasOS dilisensikan di bawah lisensi *open-source*. Anda diundang untuk berkontribusi, memodifikasi, maupun mendistribusikan ulang proyek ini.
