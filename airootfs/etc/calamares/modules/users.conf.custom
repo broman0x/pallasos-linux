@@ -1,0 +1,21 @@
+---
+# Users module configuration for PallasOS
+defaultGroups:
+    - video
+    - power
+    - storage
+    - optical
+    - network
+    - lp
+    - scanner
+    - wheel
+    - sys
+    - rfkill
+    - autologin
+
+autologinGroup:  autologin
+doAutologin:     false
+sudoersGroup:    wheel
+setRootPassword: false
+doReusePassword: true
+defaultHostName: pallasos
